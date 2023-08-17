@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Rotativa.AspNetCore
 {
-    public abstract class AsResultBase : ViewResult //IActionResult
+    public abstract class AsResultBase : IActionResult
     {
         protected AsResultBase()
         {
@@ -30,16 +30,6 @@ namespace Rotativa.AspNetCore
         /// Path to wkhtmltopdf\wkhtmltoimage binary.
         /// </summary>
         public string WkhtmlPath { get; set; }
-
-        /// <summary>
-        /// Custom name of authentication cookie used by forms authentication.
-        /// </summary>
-        [Obsolete("Use FormsAuthenticationCookieName instead of CookieName.")]
-        public string CookieName
-        {
-            get { return this.FormsAuthenticationCookieName; }
-            set { this.FormsAuthenticationCookieName = value; }
-        }
 
         /// <summary>
         /// Custom name of authentication cookie used by forms authentication.

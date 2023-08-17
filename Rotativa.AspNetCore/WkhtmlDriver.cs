@@ -10,7 +10,7 @@ namespace Rotativa.AspNetCore
         /// <summary>
         /// Converts given URL or HTML string to PDF.
         /// </summary>
-        /// <param name="wkhtmlPath">Path to wkthmltopdf\wkthmltoimage.</param>
+        /// <param name="wkhtmlPath">Path to wkhtmltopdf\wkhtmltoimage.</param>
         /// <param name="switches">Switches that will be passed to wkhtmltopdf binary.</param>
         /// <param name="html">String containing HTML code that should be converted to PDF.</param>
         /// <param name="wkhtmlExe"></param>
