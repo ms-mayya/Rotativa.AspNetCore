@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Rotativa.AspNetCore.Options;
+﻿using Rotativa.Options;
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
-namespace Rotativa.AspNetCore
+namespace Rotativa
 {
-    public abstract class AsPdfResultBase : AsResultBase
+    public abstract class AsPdf : AsResultBase
     {
-        protected AsPdfResultBase()
+        protected AsPdf()
         {
             this.PageMargins = new Margins();
         }
+
+        public Uri BaseUrl { get; set; }
+        public string Html { get; set; }
+
         /// <summary>
         /// Sets the page size.
         /// </summary>
@@ -48,27 +53,6 @@ namespace Rotativa.AspNetCore
             return WkhtmltopdfDriver.Convert(this.WkhtmlPath, switches);
         }
 
-        protected override string GetContentType()
-        {
-            return "application/pdf";
-        }
-
-        /// <summary>
-        /// Path to wkhtmltopdf binary.
-        /// </summary>
-        [Obsolete("Use WkhtmlPath instead of CookieName.", false)]
-        public string WkhtmltopdfPath
-        {
-            get
-            {
-                return this.WkhtmlPath;
-            }
-            set
-            {
-                this.WkhtmlPath = value;
-            }
-        }
-
         /// <summary>
         /// Indicates whether the PDF should be generated in lower quality.
         /// </summary>
@@ -98,6 +82,15 @@ namespace Rotativa.AspNetCore
             result.Append(base.GetConvertOptions());
 
             return result.ToString().Trim();
+        }
+
+        protected override Task<byte[]> CallTheDriver()
+        {
+            string baseUrl = string.Format("{0}://{1}", BaseUrl.Scheme, BaseUrl.Host);
+            var htmlForWkhtml = Regex.Replace(Html, "<head>", string.Format("<head><base href=\"{0}\" />", baseUrl), RegexOptions.IgnoreCase);
+
+            byte[] fileContent = WkhtmltopdfDriver.ConvertHtml(this.WkhtmlPath, this.GetConvertOptions(), htmlForWkhtml);
+            return Task.FromResult(fileContent);
         }
     }
 }

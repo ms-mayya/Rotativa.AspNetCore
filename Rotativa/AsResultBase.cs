@@ -1,24 +1,18 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Web;
-using Rotativa.AspNetCore.Options;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Rotativa.Options;
 
-namespace Rotativa.AspNetCore
+namespace Rotativa
 {
     public abstract class AsResultBase
     {
         protected AsResultBase()
         {
-            this.WkhtmlPath = string.Empty;
-            this.FormsAuthenticationCookieName = ".ASPXAUTH";
+            WkhtmlPath = string.Empty;
+            FormsAuthenticationCookieName = ".ASPXAUTH";
         }
 
         /// <summary>
@@ -93,7 +87,7 @@ namespace Rotativa.AspNetCore
         {
             var result = new StringBuilder();
 
-            var fields = this.GetType().GetProperties();
+            var fields = GetType().GetProperties();
             foreach (var fi in fields)
             {
                 var of = fi.GetCustomAttributes(typeof(OptionFlag), true).FirstOrDefault() as OptionFlag;
@@ -130,15 +124,15 @@ namespace Rotativa.AspNetCore
         {
             var switches = string.Empty;
 
-            switches += " " + this.GetConvertOptions();
+            switches += " " + GetConvertOptions();
 
             return switches;
         }
 
         protected virtual async Task<byte[]> CallTheDriver()
         {
-            var switches = this.GetWkParams();
-            var fileContent = this.WkhtmlConvert(switches);
+            var switches = GetWkParams();
+            var fileContent = WkhtmlConvert(switches);
             return fileContent;
         }
 
@@ -146,10 +140,7 @@ namespace Rotativa.AspNetCore
 
         public async Task<byte[]> BuildFile()
         {
-            //if (this.WkhtmlPath == string.Empty)
-            //    this.WkhtmlPath = context.HttpContext.Server.MapPath("~/Rotativa");
-
-            this.WkhtmlPath = RotativaConfiguration.RotativaPath;
+            WkhtmlPath = RotativaConfiguration.RotativaPath;
 
             var fileContent = await CallTheDriver();
 
